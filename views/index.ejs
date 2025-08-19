@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <meta name="author" content="E-Scooter Blog" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <title>
+        <%= title || 'Electric Scooter News, Reviews, Guides and Insights' %>
+    </title>
+    <!-- Meta Description -->
+    <meta name="description"
+        content="<%= metaDescription || 'Latest electric scooter news, reviews, guides and insights. Stay updated with the latest in electric mobility and EV technology.' %>" />
+
+    <!-- Meta Tags -->
+    <meta name="keywords"
+        content="<%= metaTags || 'electric scooter, ev news, scooter reviews, electric vehicle, blog' %>" />
+
+    <!-- Canonical Tag -->
+    <link rel="canonical" href="<%= canonicalUrl || 'https://e-scooter.blog/' %>" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="<%= ogTitle %>">
+    <meta property="og:description" content="<%= ogDescription %>">
+    <meta property="og:url" content="<%= ogUrl %>">
+    <meta property="og:image" content="<%= ogImage %>">
+    <meta property="og:site_name" content="Electric Scooter News, Reviews, Guides and Insights" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:title" content="<%= ogTitle %>">
+    <meta name="twitter:description" content="<%= ogDescription %>">
+    <meta name="twitter:image" content="<%= ogImage %>">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        crossorigin="anonymous" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <!-- Lucide Fonts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- BlogPosting Schema -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "headline": "E-Scooter Blog",
+          "description": "Latest electric scooter news, reviews, guides and insights. Stay updated with the latest in electric mobility and EV technology.",
+          "image": "https://e-scooter.blog/uploads/logo.jpg",
+          "author": {
+            "@type": "Person",
+            "name": "E-Scooter Blog Team"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "E-Scooter Blog",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://e-scooter.blog/uploads/logo.jpg"
+            }
+          },
+          "datePublished": "2025-06-12",
+          "dateModified": "2025-06-12",
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://e-scooter.blog/"
+          },
+          "articleSection": "Electric Vehicles",
+          "keywords": "electric scooter, ev news, scooter reviews, electric vehicle, blog"
+        }
+    </script>
+
+    <!-- Author Schema -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "E-Scooter Blog Team",
+          "jobTitle": "EV Specialist",
+          "description": "Expert in electric vehicles and sustainable mobility solutions.",
+          "worksFor": {
+            "@type": "Organization",
+            "name": "E-Scooter Blog"
+          },
+          "knowsAbout": ["Electric Vehicles", "Electric Scooters", "Sustainable Mobility", "EV Technology"],
+          "url": "https://e-scooter.blog/"
+        }
+    </script>
+
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is an electric scooter, and why is it important?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "An electric scooter is a two-wheeler powered by a rechargeable battery instead of petrol or diesel. They are important for reducing fuel costs, lowering pollution, and providing an eco-friendly commuting option."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is your electric scooter information useful for buyers?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, our website is perfect for anyone looking to buy an electric scooter. You'll find detailed specifications, price comparisons, range, charging time, and brand reviews all in one place."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How is your E-Scooter Blog website different from others?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We provide a clean, fast, and accurate browsing experience with verified specifications, up-to-date pricing, and honest reviews — all 100% free with no sign-up required."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I search electric scooters by brand or price?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, you can easily browse scooters by brand, battery capacity, price range, top speed, and other filters using our quick search system."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can this site help me choose the best scooter for my needs?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Definitely! Whether you need a daily commuter or a high-performance ride, our guides, reviews, and comparison tools help you make the right choice."
+              }
+            }
+          ]
+        }
+    </script>
+
+
+
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/"><img src="../uploads/logo.jpg" alt="E-Scooter Blog Logo"></a>
+                </div>
+                <p class="header-subtitle">Your Trusted Source for Electric Scooter and EV News</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Blog Section -->
+    <section class="common-forms hide-on-search hide-on-details">
+        <div class="container">
+            <div class="blog-grid">
+                <% if (blogs && blogs.length> 0) { %>
+                    <% blogs.forEach(function(blog) { %>
+                        <a href="/blogs/<%= blog.slug %>" class="blog-card">
+                            <div class="blog-image">
+                                <img src="<%= blog.image %>" alt="<%= blog.title %>">
+                            </div>
+                            <div class="blog-content">
+                                <div class="tag">
+                                    <%= blog.category %>
+                                </div>
+                                <h3 class="blog-title">
+                                    <%= blog.title %>
+                                </h3>
+                                <div class="blog-meta">
+                                    <div class="date">
+                                        Posted on : <%
+                                        let dateToUse = null;
+                                      
+                                        if (blog.publishedDate && blog.publishedDate !== "undefined" && blog.publishedDate !== "null") {
+                                          dateToUse = blog.publishedDate;
+                                        } else if (blog.createdAt) {
+                                          dateToUse = blog.createdAt;
+                                        }
+                                      
+                                        if (dateToUse) {
+                                      %>
+                                          <%= new Date(dateToUse).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" }) %>
+                                      <%
+                                        } else {
+                                      %>
+                                          Recently Added
+                                      <%
+                                        }
+                                      %>
+                                      
+                                      </div>
+                                    <div class="author">
+                                        <i class="fas fa-user"></i>
+                                        <%= blog.authorName || 'E-Scooter Blog Team' %>
+                                    </div>
+                                </div>
+                                
+                                <p class="blog-subtitle">
+                                    <%= (blog.excerpt || '' ).replace(/<[^>]*>/g, '') %>
+                                </p>
+                            </div>
+                        </a>
+                        <% }); %>
+                            <% } else { %>
+                                <!-- Empty state when no blogs -->
+                                <div class="empty-state">
+                                    <div class="empty-icon"><i class="fas fa-heart"></i></div>
+                                    <h3 class="empty-title">No blogs found</h3>
+                                    <p class="empty-subtitle">Start publishing to see your posts here.</p>
+                                </div>
+                                <% } %>
+            </div>
+
+            <!-- Pagination Controls -->
+            <% if (pagination && pagination.totalPages> 1) { %>
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        Showing <%= (pagination.currentPage - 1) * 6 + 1 %> to <%= Math.min(pagination.currentPage * 6,
+                                pagination.totalBlogs) %> of <%= pagination.totalBlogs %> blogs
+                    </div>
+                    <nav aria-label="Blog pagination">
+                        <ul class="pagination justify-content-center">
+                            <% if (pagination.hasPrevPage) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="javascript:void(0)"
+                                        data-page="<%= pagination.currentPage - 1 %>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo; Previous</span>
+                                    </a>
+                                </li>
+                                <% } %>
+
+                                    <% for (let i=1; i <=pagination.totalPages; i++) { %>
+                                        <% if (i===pagination.currentPage) { %>
+                                            <li class="page-item active">
+                                                <span class="page-link">
+                                                    <%= i %>
+                                                </span>
+                                            </li>
+                                            <% } else { %>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="javascript:void(0)" data-page="<%= i %>">
+                                                        <%= i %>
+                                                    </a>
+                                                </li>
+                                                <% } %>
+                                                    <% } %>
+
+                                                        <% if (pagination.hasNextPage) { %>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="javascript:void(0)"
+                                                                    data-page="<%= pagination.currentPage + 1 %>"
+                                                                    aria-label="Next">
+                                                                    <span aria-hidden="true">Next &raquo;</span>
+                                                                </a>
+                                                            </li>
+                                                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+                <% } %>
+        </div>
+    </section>
+
+    <!-- Welcome Section -->
+    <section class="welcome-section hide-on-search hide-on-details">
+        <div class="container">
+            <div class="welcome-card">
+                <div class="welcome-content">
+                    <div class="welcome-text">
+                        <h1>Welcome to E-Scooter Blog</h1>
+                        <p>E-Scooter Blog is a popular and reliable online platform where you'll find the latest,
+                            accurate,
+                            and useful information about<b> electric scooters, EVs, automobiles, and trending
+                                technology</b> all explained in simple, easy-to-understand English.</p>
+                    </div>
+                    <div class="welcome-image">
+                        <div class="welcome-placeholder">
+                            <img src="/images/ev-logo.png" alt="E-Scooter Blog" width="250" height="250">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="why-choose-us hide-on-search hide-on-details">
+        <div class="container">
+            <div class="why-card">
+                <h2>Why Use Our E-Scooter Blog Website?</h2>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <p><strong>100% Free Access:</strong> Read detailed reviews, specifications, and comparisons of
+                            the latest electric scooters without any charges.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <p><strong>Easy Model-to-Model Guide:</strong> Quickly explore electric scooters by brand, price
+                            range, battery capacity, or top speed.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <p><strong>Accurate & Verified Information:</strong> All specifications, prices, and features
+                            are sourced from trusted and official sources.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <p><strong>Trusted EV Resource:</strong> Your one-stop hub for EV enthusiasts, buyers, and
+                            industry followers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section hide-on-search hide-on-details">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What is an electric scooter, and why is it important?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>An electric scooter is a two-wheeler powered by a rechargeable battery instead of petrol or
+                            diesel.
+                            They are important for reducing fuel costs, lowering pollution, and providing an
+                            eco-friendly commuting option.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is your electric scooter information useful for buyers?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, our website is perfect for anyone looking to buy an electric scooter.
+                            You'll find detailed specifications, price comparisons, range, charging time, and brand
+                            reviews all in one place.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How is your E-Scooter Blog website different from others?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We provide a clean, fast, and accurate browsing experience with verified specifications,
+                            up-to-date pricing, and honest reviews — all 100% free with no sign-up required.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I search electric scooters by brand or price?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, you can easily browse scooters by brand, battery capacity, price range, top speed, and
+                            other filters
+                            using our quick search system.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can this site help me choose the best scooter for my needs?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Definitely! Whether you need a daily commuter or a high-performance ride,
+                            our guides, reviews, and comparison tools help you make the right choice.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <a href="/"><img src="../uploads/logo.jpg" alt="E-Scooter Logo"></a>
+                    </div>
+                    <p>Your Trusted Source for Electric Scooter and EV News</p>
+                </div>
+                <div class="footer-bottom">
+                    <div class="footer-links">
+                        <span>© 2025 <b>e-scooter.blog</b> |</span>
+                        <a href="/privacy-policy">Privacy Policy</a> |
+                        <a href="/terms-of-use">Terms of Use</a> |
+                        <a href="/contact">Contact</a> |
+                        <a href="/sitemap">Sitemap</a>
+                    </div>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript files -->
+    <script src="/js/user.js"></script>
+</body>
+
+</html>

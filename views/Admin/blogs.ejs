@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .search-filters {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .bulk-actions {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .blog-preview {
+            max-width: 60px;
+            max-height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .status-toggle {
+            cursor: pointer;
+        }
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/admin-navbar') %>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-journal-text"></i> Manage Blogs</h2>
+            <a href="/<%= adminPath %>/blogs/create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Blog
+            </a>
+        </div>
+
+        <% if (typeof messages !== 'undefined' && messages.success) { %>
+            <div class="alert alert-success alert-dismissible fade show">
+                <i class="bi bi-check-circle"></i> <%= messages.success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        <% if (typeof messages !== 'undefined' && messages.error) { %>
+            <div class="alert alert-danger alert-dismissible fade show">
+                <i class="bi bi-exclamation-triangle"></i> <%= messages.error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <!-- Search and Filters -->
+        <div class="search-filters">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="<%= search %>" placeholder="Search by title, content, or excerpt...">
+                </div>
+                <div class="col-md-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-control" id="category" name="category">
+                        <option value="">All Categories</option>
+                        <% categories.forEach(function(cat) { %>
+                            <option value="<%= cat %>" <%= category === cat ? 'selected' : '' %>><%= cat %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="">All Status</option>
+                        <option value="active" <%= status === 'active' ? 'selected' : '' %>>Active</option>
+                        <option value="inactive" <%= status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Filter
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="bulk-actions" id="bulkActions">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <span id="selectedCount">0</span> blog(s) selected
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-success btn-sm" onclick="bulkUpdateStatus('active')">
+                        <i class="bi bi-check-circle"></i> Activate
+                    </button>
+                    <button class="btn btn-warning btn-sm" onclick="bulkUpdateStatus('inactive')">
+                        <i class="bi bi-pause-circle"></i> Deactivate
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="bulkDelete()">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted">
+                Showing <%= ((currentPage - 1) * 10) + 1 %> to <%= Math.min(currentPage * 10, totalBlogs) %> of <%= totalBlogs %> blogs
+            </div>
+            <div>
+                <button class="btn btn-outline-secondary btn-sm" onclick="selectAll()">
+                    <i class="bi bi-check-all"></i> Select All
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" onclick="deselectAll()">
+                    <i class="bi bi-x-circle"></i> Deselect All
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th width="50">
+                            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
+                        </th>
+                        <th width="80">Image</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th width="200">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% blogs.forEach(function(blog) { %>
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="blog-checkbox" value="<%= blog._id %>" onchange="updateBulkActions()">
+                            </td>
+                            <td>
+                                <img src="<%= blog.image %>" alt="<%= blog.title %>" class="blog-preview">
+                            </td>
+                            <td>
+                                <div>
+                                    <strong><%= blog.title %></strong>
+                                    <br>
+                                    <small class="text-muted"><%= blog.slug %></small>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info"><%= blog.category %></span>
+                            </td>
+                            <td>
+                                <span class="status-toggle badge <%= blog.isActive ? 'bg-success' : 'bg-secondary' %>" 
+                                      onclick="toggleStatus('<%= blog._id %>')" 
+                                      data-blog-id="<%= blog._id %>">
+                                    <%= blog.isActive ? 'Active' : 'Inactive' %>
+                                </span>
+                            </td>
+                            <td>
+                                <% if (blog.createdAt && !isNaN(new Date(blog.createdAt).getTime())) { %>
+                                    <%= new Date(blog.createdAt).toLocaleDateString() %>
+                                <% } else { %>
+                                    Recently Added
+                                <% } %>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="/blogs/<%= blog.slug %>" target="_blank" class="btn btn-outline-primary" title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="/<%= adminPath %>/blogs/<%= blog._id %>/edit" class="btn btn-warning" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-danger" onclick="deleteBlog('<%= blog._id %>')" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+            <nav aria-label="Blog pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <!-- Previous Page -->
+                    <% if (hasPrevPage) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="/<%= adminPath %>/blogs?page=<%= currentPage - 1 %><%= search ? '&search=' + search : '' %><%= category ? '&category=' + category : '' %><%= status ? '&status=' + status : '' %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    <% } else { %>
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-hidden="true">&laquo;</span>
+                        </li>
+                    <% } %>
+
+                    <!-- Page Numbers -->
+                    <% 
+                    let startPage = Math.max(1, currentPage - 2);
+                    let endPage = Math.min(totalPages, currentPage + 2);
+                    
+                    if (currentPage <= 3) {
+                        endPage = Math.min(5, totalPages);
+                    }
+                    
+                    if (currentPage >= totalPages - 2) {
+                        startPage = Math.max(1, totalPages - 4);
+                    }
+                    %>
+
+                    <% if (startPage > 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="/<%= adminPath %>/blogs?page=1<%= search ? '&search=' + search : '' %><%= category ? '&category=' + category : '' %><%= status ? '&status=' + status : '' %>">1</a>
+                        </li>
+                        <% if (startPage > 2) { %>
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        <% } %>
+                    <% } %>
+
+                    <% for (let i = startPage; i <= endPage; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="/<%= adminPath %>/blogs?page=<%= i %><%= search ? '&search=' + search : '' %><%= category ? '&category=' + category : '' %><%= status ? '&status=' + status : '' %>"><%= i %></a>
+                        </li>
+                    <% } %>
+
+                    <% if (endPage < totalPages) { %>
+                        <% if (endPage < totalPages - 1) { %>
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        <% } %>
+                        <li class="page-item">
+                            <a class="page-link" href="/<%= adminPath %>/blogs?page=<%= totalPages %><%= search ? '&search=' + search : '' %><%= category ? '&category=' + category : '' %><%= status ? '&status=' + status : '' %>"><%= totalPages %></a>
+                        </li>
+                    <% } %>
+
+                    <!-- Next Page -->
+                    <% if (hasNextPage) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="/<%= adminPath %>/blogs?page=<%= currentPage + 1 %><%= search ? '&search=' + search : '' %><%= category ? '&category=' + category : '' %><%= status ? '&status=' + status : '' %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    <% } else { %>
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-hidden="true">&raquo;</span>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        <% } %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Bulk operations
+        function updateBulkActions() {
+            const checkboxes = document.querySelectorAll('.blog-checkbox:checked');
+            const bulkActions = document.getElementById('bulkActions');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            if (checkboxes.length > 0) {
+                bulkActions.style.display = 'block';
+                selectedCount.textContent = checkboxes.length;
+            } else {
+                bulkActions.style.display = 'none';
+            }
+        }
+
+        function selectAll() {
+            document.querySelectorAll('.blog-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            document.getElementById('selectAllCheckbox').checked = true;
+            updateBulkActions();
+        }
+
+        function deselectAll() {
+            document.querySelectorAll('.blog-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.getElementById('selectAllCheckbox').checked = false;
+            updateBulkActions();
+        }
+
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            document.querySelectorAll('.blog-checkbox').forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            updateBulkActions();
+        }
+
+        // Status toggle
+        async function toggleStatus(blogId) {
+            try {
+                const response = await fetch(`/<%= adminPath %>/blogs/${blogId}/toggle-status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const statusElement = document.querySelector(`[data-blog-id="${blogId}"]`);
+                    if (data.isActive) {
+                        statusElement.className = 'status-toggle badge bg-success';
+                        statusElement.textContent = 'Active';
+                    } else {
+                        statusElement.className = 'status-toggle badge bg-secondary';
+                        statusElement.textContent = 'Inactive';
+                    }
+                    
+                    showAlert('success', data.message);
+                } else {
+                    showAlert('error', data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('error', 'Failed to toggle status');
+            }
+        }
+
+        // Bulk operations
+        async function bulkUpdateStatus(status) {
+            const checkboxes = document.querySelectorAll('.blog-checkbox:checked');
+            const blogIds = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (blogIds.length === 0) {
+                showAlert('error', 'No blogs selected');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to ${status} ${blogIds.length} blog(s)?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/<%= adminPath %>/blogs/bulk-update-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ blogIds, status })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', data.message);
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showAlert('error', data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('error', 'Failed to update status');
+            }
+        }
+
+        async function bulkDelete() {
+            const checkboxes = document.querySelectorAll('.blog-checkbox:checked');
+            const blogIds = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (blogIds.length === 0) {
+                showAlert('error', 'No blogs selected');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete ${blogIds.length} blog(s)? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/<%= adminPath %>/blogs/bulk-delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ blogIds })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', data.message);
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showAlert('error', data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('error', 'Failed to delete blogs');
+            }
+        }
+
+        function deleteBlog(blogId) {
+            if (confirm('Are you sure you want to delete this blog? This action cannot be undone.')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/<%= adminPath %>/blogs/' + blogId + '/delete';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

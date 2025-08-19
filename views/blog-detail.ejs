@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <title>
+    <%= title %>
+  </title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="author" content="E-Scooter Blog" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+
+  <meta name="title" content="<%= title %>">
+  <meta name="description" content="<%= metaDescription %>">
+
+  <link rel="canonical" href="<%= canonicalUrl %>" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="<%= ogTitle %>">
+  <meta property="og:description" content="<%= ogDescription %>">
+  <meta property="og:image" content="<%= ogImage %>">
+  <meta property="og:url" content="<%= ogUrl %>">
+  <meta property="og:site_name" content="<%= ogTitle %>" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:title" content="<%= twitterTitle %>">
+  <meta name="twitter:description" content="<%= twitterDescription %>">
+  <meta name="twitter:image" content="<%= twitterImage %>">
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous" />
+
+  <!-- Schema.org Structured Data -->
+  <% if (blog.blogPostingSchema && blog.blogPostingSchema.trim() !=='' ) { %>
+    <script type="application/ld+json">
+      <%- blog.blogPostingSchema %>
+    </script>
+    <% } else { %>
+      <!-- Fallback BlogPosting schema -->
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "<%= blog.title %>",
+        "description": "<%= blog.excerpt %>",
+        "image": "<%= blog.image %>",
+        "author": {
+          "@type": "Person",
+          "name": "<%= blog.authorName %>",
+          "jobTitle": "<%= blog.authorTitle %>",
+          "description": "<%= blog.authorBio %>"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "E-Scooter Blog",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://e-scooter.blog/images/logo.jpg"
+          }
+        },
+        "datePublished": "<%= blog.publishedDate %>",
+        "dateModified": "<%= blog.updatedAt || blog.publishedDate %>",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "<%= blog.canonicalUrl || `https://e-scooter.blog/blogs/${blog.slug}` %>"
+        }
+      }
+    </script>
+      <% } %>
+
+        <% if (blog.authorSchema && blog.authorSchema.trim() !=='' ) { %>
+          <script type="application/ld+json">
+      <%- blog.authorSchema %>
+    </script>
+          <% } else { %>
+            <!-- Fallback Author schema -->
+            <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "<%= blog.authorName %>",
+        "jobTitle": "<%= blog.authorTitle %>",
+        "description": "<%= blog.authorBio %>",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "E-Scooter Blog"
+        }
+      }
+    </script>
+            <% } %>
+
+              <% if (blog.faqSchema && blog.faqSchema.trim() !=='' ) { %>
+                <script type="application/ld+json">
+      <%- blog.faqSchema %>
+    </script>
+                <% } else { %>
+                  <!-- Fallback FAQ schema -->
+                  <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is <%= blog.title %>?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "<%= blog.excerpt %>"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Who wrote this article?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "<%= blog.authorName %>, <%= blog.authorTitle %>"
+            }
+          }
+        ]
+      }
+    </script>
+                  <% } %>
+
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo mb-2">
+          <a href="/"><img src="../uploads/logo.jpg" alt="E-Scooter Blog Logo"></a>
+        </div>
+        <p class="header-subtitle">Your Trusted Source for Electric Scooter and EV News</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Blog Detail Section -->
+  <section class="common-forms">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-9">
+          <div class="details">
+            <div class="details-content">
+              <h1>
+                <%= blog.title %>
+              </h1>
+              <p class="subtitle">
+                Posted On : <% let dateToUse=null; if (blog.publishedDate && blog.publishedDate !=="undefined" &&
+                  blog.publishedDate !=="null" ) { dateToUse=blog.publishedDate; } else if (blog.createdAt) {
+                  dateToUse=blog.createdAt; } if (dateToUse) { %>
+                  <%= new Date(dateToUse).toLocaleDateString("en-GB", { day: "2-digit" , month: "long" , year: "numeric"
+                    }) %>
+                    <% } else { %>
+                      Recently Added
+                      <% } %>
+
+
+              </p>
+
+              <!-- Main Blog Images -->
+              <img src="<%= blog.image %>" alt="<%= blog.title %>" class="details-image">
+              <% if (blog.image2) { %>
+                <img src="<%= blog.image2 %>" alt="<%= blog.title %>" class="details-image">
+                <% } %>
+                  <div class="details-description">
+                    <div class="details-description-text">
+                      <%- blog.content %>
+                    </div>
+                  </div>
+                  <% if (blog.image3) { %>
+                    <img src="<%= blog.image3 %>" alt="<%= blog.title %>" class="details-image">
+                    <% } %>
+
+
+            </div>
+
+            <!-- Enhanced Author Section -->
+            <div class="author-section">
+              <div class="author-info">
+                <div class="author-avatar">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="author-details">
+                  <h4 class="author-name">
+                    <%= blog.authorName || 'E-Scooter Blog Team' %>
+                  </h4>
+                  <p class="author-title">
+                    <%= blog.authorTitle || 'EV Specialist' %>
+                  </p>
+                  <p class="author-bio">
+                    <%= blog.authorBio || 'Expert in electric vehicles and sustainable mobility solutions.' %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 col-lg-3">
+          <div class="blog-grid">
+            <% relatedBlogs.forEach(function(relatedBlog) { %>
+              <a href="/blogs/<%= relatedBlog.slug %>" class="blog-card">
+                <div class="blog-image">
+                  <img src="<%= relatedBlog.image %>" alt="<%= relatedBlog.title %>">
+                </div>
+                <div class="blog-content">
+                  <div class="tag">
+                    <%= relatedBlog.category %>
+                  </div>
+                  <h3 class="blog-title">
+                    <%= relatedBlog.title %>
+                  </h3>
+                  <div class="date">
+                    Posted on : <% let dateToUse=null; if (blog.publishedDate && blog.publishedDate !=="undefined" &&
+                      blog.publishedDate !=="null" ) { dateToUse=blog.publishedDate; } else if (blog.createdAt) {
+                      dateToUse=blog.createdAt; } if (dateToUse) { %>
+                      <%= new Date(dateToUse).toLocaleDateString("en-GB", { day: "2-digit" , month: "long" ,
+                        year: "numeric" }) %>
+                        <% } else { %>
+                          Recently Added
+                          <% } %>
+
+
+                  </div>
+                </div>
+              </a>
+              <% }); %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer hide-on-search">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <a href="/"><img src="../uploads/logo.jpg" alt="E-Scooter Logo"></a>
+          </div>
+          <p>Your Trusted Source for Electric Scooter and EV News</p>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-links">
+            <span>© 2025 <b>e-scooter.blog</b> |</span>
+            <a href="/privacy-policy">Privacy Policy</a> |
+            <a href="/terms-of-use">Terms of Use</a> |
+            <a href="/contact">Contact</a> |
+            <a href="/sitemap">Sitemap</a>
+          </div>
+          <div class="footer-social">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      const canvas = document.getElementById('salesChart');
+
+      if (canvas && canvas.getContext) {
+        const ctx = canvas.getContext('2d');
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['FY2023', 'FY2024', 'FY2025'],
+            datasets: [{
+              label: 'Bajaj Chetak Sales',
+              data: [71941, 193439, 260000],
+              backgroundColor: 'rgba(62, 177, 122, 0.8)',
+              borderColor: 'rgba(62, 177, 122, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function (value) {
+                    return value.toLocaleString();
+                  }
+                }
+              }
+            }
+          }
+        });
+      } else {
+        console.warn('Chart canvas element not found');
+      }
+    });
+  </script>
+
+</body>
+
+</html>

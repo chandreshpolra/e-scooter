@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/<%= adminPath %>">e-scooter.blog Blog Admin</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="adminNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/<%= adminPath %>">Dashboard</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Blogs
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/<%= adminPath %>/blogs">Manage Blogs</a></li>
+                        <li><a class="dropdown-item" href="/<%= adminPath %>/blogs/create">Add New Blog</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" target="_blank">View Website</a>
+                </li>
+                <li class="nav-item">
+                    <form action="/<%= adminPath %>/logout" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav> 

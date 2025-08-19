@@ -1,0 +1,109 @@
+<%- include('../partials/user-head') %>
+<%- include('../partials/admin-navbar') %>
+
+<style>
+  .glass-card {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  }
+
+  .modern-btn {
+    padding: 0.5rem 1.4rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .btn-primary-modern {
+    background: #c8690f;
+    color: #fff;
+    border: none;
+  }
+
+  .btn-primary-modern:hover {
+    opacity: 0.9;
+  }
+
+  .btn-outline-modern {
+    border: 2px solid #6c63ff;
+    color: #6c63ff;
+    background: transparent;
+  }
+
+  .btn-outline-modern:hover {
+    background-color: #6c63ff;
+    color: #fff;
+  }
+
+  .glass-table thead {
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+  }
+
+  .glass-table tbody tr:hover {
+    background-color: rgba(240, 240, 240, 0.6);
+  }
+</style>
+
+<div class="container mt-5">
+  <h1 class="mb-5 text-center fw-600 display-5 text-dark">Blog Admin Dashboard</h1>
+
+  <div class="row g-4">
+    <!-- Card: Total Blogs -->
+    <div class="col-md-6">
+      <div class="p-4 glass-card text-center">
+        <h5 class="text-dark">Total Blogs</h5>
+        <div class="fs-1 fw-bold text-primary mb-3"><%= blogsCount %></div>
+        <a href="/<%= adminPath %>/blogs" class="modern-btn btn-primary-modern">Manage Blogs</a>
+      </div>
+    </div>
+
+    <!-- Card: Quick Actions -->
+    <div class="col-md-6">
+      <div class="p-4 glass-card text-center">
+        <h5 class="text-dark mb-3">Quick Actions</h5>
+        <div class="d-grid gap-1">
+          <a href="/<%= adminPath %>/blogs/create" class="modern-btn btn-outline-modern">Add New Blog</a>
+          <a href="/" class="modern-btn btn-outline-modern">View Website</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Statistics -->
+  <div class="glass-card mt-5 p-4">
+    <h5 class="mb-4 text-dark">Blog Management</h5>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="text-center p-3">
+          <h6 class="text-dark">Active Blogs</h6>
+          <p class="fs-4 text-success mb-0"><%= blogsCount %></p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="text-center p-3">
+          <h6 class="text-dark">Total Views</h6>
+          <p class="fs-4 text-info mb-0">Coming Soon</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="text-center p-3">
+          <h6 class="text-dark">Categories</h6>
+          <p class="fs-4 text-warning mb-0">Auto</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/scripts') %>

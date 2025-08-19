@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .form-section h5 {
+            color: #495057;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+        .ql-editor {
+            min-height: 300px;
+        }
+        .slug-preview {
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .char-count {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 5px;
+        }
+        .char-count.warning {
+            color: #ffc107;
+        }
+        .char-count.danger {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/admin-navbar') %>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-pencil-square"></i> <%= title %></h2>
+            <a href="/<%= adminPath %>/blogs" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Blogs
+            </a>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="blogForm">
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-info-circle"></i> Basic Information</h5>
+                        
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title *</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   value="<%= blog ? blog.title : '' %>" required 
+                                   onkeyup="generateSlug()" maxlength="200">
+                            <div class="char-count" id="titleCount">0/200</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="customSlug" class="form-label">Custom Slug</label>
+                            <input type="text" class="form-control" id="customSlug" name="customSlug" 
+                                   value="<%= blog ? blog.slug : '' %>" 
+                                   placeholder="Leave empty for auto-generated slug">
+                            <div class="slug-preview" id="slugPreview">
+                                Preview: <%= blog ? blog.slug : 'your-blog-title' %>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="excerpt" class="form-label">Excerpt *</label>
+                            <textarea class="form-control" id="excerpt" name="excerpt" rows="3" required 
+                                      maxlength="300"><%= blog ? blog.excerpt : '' %></textarea>
+                            <div class="char-count" id="excerptCount">0/300</div>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-file-text"></i> Content</h5>
+                        <div id="editor" style="height: 400px;">
+                            <%- blog ? blog.content : '' %>
+                        </div>
+                        <input type="hidden" name="content" id="content">
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Settings -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-gear"></i> Settings</h5>
+                        
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-control" id="category" name="category">
+                                <option value="Automobile" <%= blog && blog.category === 'Automobile' ? 'selected' : '' %>>Automobile</option>
+                                <option value="Technology" <%= blog && blog.category === 'Technology' ? 'selected' : '' %>>Technology</option>
+                                <option value="Electric Vehicles" <%= blog && blog.category === 'Electric Vehicles' ? 'selected' : '' %>>Electric Vehicles</option>
+                                <option value="News" <%= blog && blog.category === 'News' ? 'selected' : '' %>>News</option>
+                                <option value="Reviews" <%= blog && blog.category === 'Reviews' ? 'selected' : '' %>>Reviews</option>
+                                <option value="Guides" <%= blog && blog.category === 'Guides' ? 'selected' : '' %>>Guides</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Featured Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewImage(this)">
+                            <% if (blog && blog.image) { %>
+                                <div class="mt-2">
+                                    <img src="<%= blog.image %>" alt="Current image" class="image-preview" id="currentImage">
+                                </div>
+                            <% } %>
+                            <div class="mt-2" id="imagePreview" style="display: none;">
+                                <img src="" alt="Preview" class="image-preview">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEO -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-search"></i> SEO Settings</h5>
+                        
+                        <div class="mb-3">
+                            <label for="metaTitle" class="form-label">Meta Title</label>
+                            <input type="text" class="form-control" id="metaTitle" name="metaTitle" 
+                                   value="<%= blog ? blog.metaTitle : '' %>" maxlength="60">
+                            <div class="char-count" id="metaTitleCount">0/60</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="metaDescription" class="form-label">Meta Description</label>
+                            <textarea class="form-control" id="metaDescription" name="metaDescription" 
+                                      rows="3" maxlength="160"><%= blog ? blog.metaDescription : '' %></textarea>
+                            <div class="char-count" id="metaDescriptionCount">0/160</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="metaTags" class="form-label">Meta Tags</label>
+                            <input type="text" class="form-control" id="metaTags" name="metaTags" 
+                                   value="<%= blog ? blog.metaTags : '' %>" 
+                                   placeholder="tag1, tag2, tag3">
+                            <div class="form-text">Separate tags with commas</div>
+                        </div>
+                    </div>
+
+                    <!-- Author Information -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-person"></i> Author Information</h5>
+                        <div class="form-group">
+                            <label for="authorName">Author Name *</label>
+                            <input type="text" class="form-control" id="authorName" name="authorName" 
+                                   value="<%= blog ? blog.authorName || '' : '' %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="authorTitle">Author Title</label>
+                            <input type="text" class="form-control" id="authorTitle" name="authorTitle" 
+                                   value="<%= blog ? blog.authorTitle || '' : '' %>" 
+                                   placeholder="e.g., SEO Specialist, EV Expert">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="authorBio">Author Bio</label>
+                            <textarea class="form-control" id="authorBio" name="authorBio" rows="3" 
+                                      placeholder="Brief description about the author..."><%= blog ? blog.authorBio || '' : '' %></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="form-section">
+                        <h5><i class="bi bi-lightning"></i> Actions</h5>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="bi bi-check-circle"></i> 
+                                <%= blog ? 'Update Blog' : 'Create Blog' %>
+                            </button>
+                            
+                            <% if (blog) { %>
+                                <a href="/blogs/<%= blog.slug %>" target="_blank" class="btn btn-outline-primary">
+                                    <i class="bi bi-eye"></i> View Blog
+                                </a>
+                            <% } %>
+                            
+                            <a href="/<%= adminPath %>/blogs" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        // Initialize Quill editor
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    ['link', 'image'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Character counters
+        function updateCharCount(elementId, maxLength) {
+            const element = document.getElementById(elementId);
+            const countElement = document.getElementById(elementId + 'Count');
+            const count = element.value.length;
+            
+            countElement.textContent = count + '/' + maxLength;
+            countElement.className = 'char-count';
+            
+            if (count > maxLength * 0.9) {
+                countElement.classList.add('warning');
+            }
+            if (count > maxLength) {
+                countElement.classList.add('danger');
+            }
+        }
+
+        // Initialize character counters
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCharCount('title', 200);
+            updateCharCount('excerpt', 300);
+            updateCharCount('metaTitle', 60);
+            updateCharCount('metaDescription', 160);
+        });
+
+        // Add event listeners for character counting
+        document.getElementById('title').addEventListener('input', () => updateCharCount('title', 200));
+        document.getElementById('excerpt').addEventListener('input', () => updateCharCount('excerpt', 300));
+        document.getElementById('metaTitle').addEventListener('input', () => updateCharCount('metaTitle', 60));
+        document.getElementById('metaDescription').addEventListener('input', () => updateCharCount('metaDescription', 160));
+
+        // Generate slug from title
+        function generateSlug() {
+            const title = document.getElementById('title').value;
+            const customSlug = document.getElementById('customSlug');
+            const slugPreview = document.getElementById('slugPreview');
+            
+            if (!customSlug.value) {
+                const slug = title.toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .trim('-');
+                
+                slugPreview.textContent = 'Preview: ' + slug;
+            }
+        }
+
+        // Image preview
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const currentImage = document.getElementById('currentImage');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.querySelector('img').src = e.target.result;
+                    preview.style.display = 'block';
+                    if (currentImage) {
+                        currentImage.style.display = 'none';
+                    }
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+                if (currentImage) {
+                    currentImage.style.display = 'block';
+                }
+            }
+        }
+
+        // Form submission
+        document.getElementById('blogForm').addEventListener('submit', function(e) {
+            // Get content from Quill editor
+            const content = quill.root.innerHTML;
+            document.getElementById('content').value = content;
+            
+            // Validate required fields
+            const title = document.getElementById('title').value.trim();
+            const excerpt = document.getElementById('excerpt').value.trim();
+            
+            if (!title || !excerpt || !content) {
+                e.preventDefault();
+                alert('Please fill in all required fields (Title, Excerpt, and Content)');
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+            submitBtn.disabled = true;
+        });
+
+        // Auto-save draft (optional feature)
+        let autoSaveTimer;
+        function autoSave() {
+            const title = document.getElementById('title').value;
+            const excerpt = document.getElementById('excerpt').value;
+            const content = quill.root.innerHTML;
+            
+            if (title || excerpt || content) {
+                localStorage.setItem('blogDraft', JSON.stringify({
+                    title: title,
+                    excerpt: excerpt,
+                    content: content,
+                    timestamp: new Date().toISOString()
+                }));
+            }
+        }
+
+        // Set up auto-save
+        document.getElementById('title').addEventListener('input', () => {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(autoSave, 2000);
+        });
+        
+        document.getElementById('excerpt').addEventListener('input', () => {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(autoSave, 2000);
+        });
+        
+        quill.on('text-change', () => {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(autoSave, 2000);
+        });
+    </script>
+</body>
+</html> 
