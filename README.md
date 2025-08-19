@@ -51,7 +51,7 @@ A modern, responsive blog platform focused on electric scooters and electric veh
 3. **Environment Setup**
    Create a `.env` file in the root directory:
    ```env
-   PORT=3002
+   PORT=3006
    MONGODB_URI=mongodb://localhost:27017/e-scooter.blog-blog
    SESSION_SECRET=your-secret-key-here
    ADMIN_PATH=secure_dashboard_85490gtu4rgj
@@ -128,11 +128,11 @@ e-scooter.blog/
 ## Usage
 
 ### Public Access
-- Visit `http://localhost:3002` to view the public blog
+- Visit `http://localhost:3006` to view the public blog
 - Browse blog posts, read articles, and explore categories
 
 ### Admin Access
-- Visit `http://localhost:3002/secure_dashboard_85490gtu4rgj`
+- Visit `http://localhost:3006/secure_dashboard_85490gtu4rgj`
 - Login with admin credentials
 - Manage blogs, create new posts, and configure settings
 
@@ -172,7 +172,7 @@ e-scooter.blog/
 ## Configuration
 
 ### Environment Variables
-- `PORT`: Server port (default: 3002)
+- `PORT`: Server port (default: 3006)
 - `MONGODB_URI`: MongoDB connection string
 - `SESSION_SECRET`: Session encryption key
 - `ADMIN_PATH`: Admin panel URL path
@@ -214,7 +214,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 COPY . .
-EXPOSE 3002
+EXPOSE 3006
 CMD ["npm", "start"]
 ```
 

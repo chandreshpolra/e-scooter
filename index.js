@@ -18,7 +18,7 @@ require('./config/database');
 const Blog = require('./models/Blog');
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3006;
 
 const ADMIN_PATH = process.env.ADMIN_PATH || 'secure_dashboard_85490gtu4rgj';
 
