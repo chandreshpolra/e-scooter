@@ -17,7 +17,7 @@
   <meta name="description" content="<%= metaDescription %>">
 
   <link rel="canonical" href="<%= canonicalUrl %>" />
-  
+
   <!-- Open Graph Meta Tags -->
   <meta property="og:type" content="article">
   <meta property="og:title" content="<%= ogTitle %>">
@@ -129,17 +129,17 @@
                   <% } %>
 
 
-    <meta name="google-site-verification" content="_ZuuY2jNs-2lytt1iVDMVNSUgj8Jsw8MRkke9Kph0p4" />
+                    <meta name="google-site-verification" content="_ZuuY2jNs-2lytt1iVDMVNSUgj8Jsw8MRkke9Kph0p4" />
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BD6TJVQC24"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-BD6TJVQC24');
-    </script>
+                    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BD6TJVQC24"></script>
+                    <script>
+                      window.dataLayer = window.dataLayer || [];
+                      function gtag() { dataLayer.push(arguments); }
+                      gtag('js', new Date());
+                      gtag('config', 'G-BD6TJVQC24');
+                    </script>
 
-    <meta name="yandex-verification" content="44f08ebc53b9aa57" />
+                    <meta name="yandex-verification" content="44f08ebc53b9aa57" />
 </head>
 
 <body>
@@ -232,15 +232,14 @@
                     <%= relatedBlog.title %>
                   </h3>
                   <div class="date">
-                    Posted on : <% let dateToUse=null; if (blog.publishedDate && blog.publishedDate !=="undefined" &&
-                      blog.publishedDate !=="null" ) { dateToUse=blog.publishedDate; } else if (blog.createdAt) {
-                      dateToUse=blog.createdAt; } if (dateToUse) { %>
+                    Posted on : <% let dateToUse=null; if (relatedBlog.publishedDate && relatedBlog.publishedDate
+                      !=="undefined" && relatedBlog.publishedDate !=="null" ) { dateToUse=relatedBlog.publishedDate; }
+                      else if (relatedBlog.createdAt) { dateToUse=relatedBlog.createdAt; } if (dateToUse) { %>
                       <%= new Date(dateToUse).toLocaleDateString("en-GB", { day: "2-digit" , month: "long" ,
                         year: "numeric" }) %>
                         <% } else { %>
                           Recently Added
                           <% } %>
-
 
                   </div>
                 </div>
