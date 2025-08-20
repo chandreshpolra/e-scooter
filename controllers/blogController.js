@@ -1,13 +1,15 @@
 const Blog = require('../models/Blog');
 
+// Debugging logs
+console.log('Blog Controller Loaded');
+
 // Get paginated blogs for index page (6 per page)
 exports.getBlogsForIndex = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 6; // Show 6 blogs per page
+    const limit = 6;
     const skip = (page - 1) * limit;
 
-    // Get total count for pagination
     const totalBlogs = await Blog.countDocuments({ isActive: true });
     const totalPages = Math.ceil(totalBlogs / limit);
 
@@ -27,23 +29,31 @@ exports.getBlogsForIndex = async (req, res) => {
         ? new Date(blog.createdAt).toISOString().split("T")[0]
         : null
     }));
-  
-    res.json({
+
+    res.render('index', {
       blogs,
       pagination: {
         currentPage: page,
-        totalPages: totalPages,
-        totalBlogs: totalBlogs,
+        totalPages,
+        totalBlogs,
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1
-      }
+      },
+      title: "E-Scooter Blog",
+      metaDescription: "Latest electric scooter news, reviews, guides and insights.",
+      metaTags: "electric scooter, ev news, scooter reviews, electric vehicle, blog",
+      canonicalUrl: "https://e-scooter.blog/",
+      ogTitle: "E-Scooter Blog",
+      ogDescription: "Stay updated with the latest in electric mobility and EV technology.",
+      ogImage: "/uploads/logo.jpg",
+      ogUrl: "https://e-scooter.blog/"
     });
-
   } catch (error) {
     console.error('Error fetching blogs:', error);
-    res.status(500).json({ message: 'Failed to fetch blogs' });
+    res.status(500).render('error', { message: 'Failed to fetch blogs' });
   }
 };
+
 
 // Get single blog by slug with exactly 2 related blogs
 exports.getBlogBySlug = async (req, res) => {
