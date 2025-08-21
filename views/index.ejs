@@ -198,10 +198,10 @@
                                         Posted on : <%
                                         let dateToUse = null;
                                       
-                                        if (blog.publishedDate && blog.publishedDate !== "undefined" && blog.publishedDate !== "null") {
-                                          dateToUse = blog.publishedDate;
-                                        } else if (blog.createdAt) {
+                                        if (blog.createdAt && blog.createdAt !== "undefined" && blog.createdAt !== "null") {
                                           dateToUse = blog.createdAt;
+                                        } else if (blog.publishedDate) {
+                                          dateToUse = blog.publishedDate;
                                         }
                                       
                                         if (dateToUse) {

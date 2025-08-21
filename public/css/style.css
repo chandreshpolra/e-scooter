@@ -1486,6 +1486,10 @@ label {
     flex-direction: row;
     gap: 5px;
     font-size: 0.8rem;
+    align-items: baseline;
+  }
+  .blog-meta .date{
+    font-size: 12px;
   }
 
   .pagination-container {
@@ -1601,8 +1605,9 @@ label {
   }
 
   .welcome-content {
-    padding: 1rem;
-    gap: 1rem;
+    padding: 1.5rem;
+    gap: 2rem;
+    display: block;
   }
 
   .welcome-text h1 {
