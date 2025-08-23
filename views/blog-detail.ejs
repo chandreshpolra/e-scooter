@@ -37,96 +37,78 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     crossorigin="anonymous" />
 
-  <!-- Schema.org Structured Data -->
-  <% if (blog.blogPostingSchema && blog.blogPostingSchema.trim() !=='' ) { %>
-    <script type="application/ld+json">
-      <%- blog.blogPostingSchema %>
-    </script>
-    <% } else { %>
-      <!-- Fallback BlogPosting schema -->
-      <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        "headline": "<%= blog.title %>",
-        "description": "<%= blog.excerpt %>",
-        "image": "<%= blog.image %>",
-        "author": {
-          "@type": "Person",
-          "name": "<%= blog.authorName %>",
-          "jobTitle": "<%= blog.authorTitle %>",
-          "description": "<%= blog.authorBio %>"
-        },
-        "publisher": {
-          "@type": "Organization",
-          "name": "E-Scooter Blog",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://e-scooter.blog/images/logo.jpg"
-          }
-        },
-        "datePublished": "<%= blog.publishedDate %>",
-        "dateModified": "<%= blog.updatedAt || blog.publishedDate %>",
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": "<%= blog.canonicalUrl || `https://e-scooter.blog/blogs/${blog.slug}` %>"
-        }
-      }
-    </script>
-      <% } %>
 
-        <% if (blog.authorSchema && blog.authorSchema.trim() !=='' ) { %>
+       <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "<%= blog.metaTitle %>",
+            "description": "<%= blog.metaDescription %>",
+            "image": [
+              "https://e-scooter.blog<%= blog.image %>",
+              "https://e-scooter.blog<%= blog.image2 %>"
+            ],
+            "datePublished": "<%= new Date(blog.publishedDate).toISOString().split('T')[0] %>",
+            "dateModified": "<%= blog.updatedAt ? new Date(blog.updatedAt).toISOString().split('T')[0] : new Date(blog.publishedDate).toISOString().split('T')[0] %>",
+            "author": {
+              "@type": "Person",
+              "name": "<%= blog.authorName %>"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "E-Scooter Blog",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://e-scooter.blog/uploads/logo.jpg"
+              }
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": "<%= blog.canonicalUrl || `https://e-scooter.blog/blogs/${blog.slug}` %>"
+            }
+          }
+        </script>
+
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "Person",
+              "name": "<%= blog.authorName %>",
+              "jobTitle": "<%= blog.authorTitle %>",
+              "description": "<%= blog.authorBio %>"
+            }
+        </script>
+
+        <% if (blog.faqSchema && blog.faqSchema.trim() !== '') { %>
           <script type="application/ld+json">
-      <%- blog.authorSchema %>
-    </script>
-          <% } else { %>
-            <!-- Fallback Author schema -->
-            <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "<%= blog.authorName %>",
-        "jobTitle": "<%= blog.authorTitle %>",
-        "description": "<%= blog.authorBio %>",
-        "worksFor": {
-          "@type": "Organization",
-          "name": "E-Scooter Blog"
-        }
-      }
-    </script>
-            <% } %>
-
-              <% if (blog.faqSchema && blog.faqSchema.trim() !=='' ) { %>
-                <script type="application/ld+json">
-      <%- blog.faqSchema %>
-    </script>
-                <% } else { %>
-                  <!-- Fallback FAQ schema -->
-                  <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is <%= blog.title %>?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "<%= blog.excerpt %>"
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Who wrote this article?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "<%= blog.authorName %>, <%= blog.authorTitle %>"
-            }
-          }
-        ]
-      }
-    </script>
-                  <% } %>
+              <%- blog.faqSchema %>
+          </script>
+        <% } else { %>
+          <script type="application/ld+json">
+                  {
+                    "@context": "https://schema.org",
+                    "@type": "FAQPage",
+                    "mainEntity": [
+                      {
+                        "@type": "Question",
+                        "name": "What is <%= blog.title %>?",
+                        "acceptedAnswer": {
+                          "@type": "Answer",
+                          "text": "<%= blog.excerpt %>"
+                        }
+                      },
+                      {
+                        "@type": "Question",
+                        "name": "Who wrote this article?",
+                        "acceptedAnswer": {
+                          "@type": "Answer",
+                          "text": "<%= blog.authorName %>, <%= blog.authorTitle %>"
+                        }
+                      }
+                    ]
+                  }
+          </script>
+          <% } %>
 
 
                     <meta name="google-site-verification" content="_ZuuY2jNs-2lytt1iVDMVNSUgj8Jsw8MRkke9Kph0p4" />

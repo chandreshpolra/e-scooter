@@ -168,7 +168,9 @@ img, iframe {
   line-height: 1.7;
   margin-bottom: 0.7rem;
 }
-
+table{
+  margin: 15px 0;
+}
 .table-container {
   width: 100%;
   overflow-x: auto;
@@ -1212,6 +1214,26 @@ label {
 
 #salesChart{
   height: 350px;
+}
+
+.pros-cons-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.pros-box, .cons-box {
+  flex: 1;
+  min-width: 250px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.pros-box h3 {
+  color: #2E7D32;
+}
+.cons-box h3 {
+  color: #D32F2F;
 }
 
 /* Responsive Design - Comprehensive Media Queries */
