@@ -217,6 +217,10 @@ router.get('/contact', (req, res) => {
   res.render('contact');
 });
 
+router.get('/about', (req, res) => {
+  res.render('about');
+});
+
 router.get('/sitemap', async (req, res) => {
   try {
     const blogs = await Blog.find({ isActive: true })

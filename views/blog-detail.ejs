@@ -38,7 +38,7 @@
     crossorigin="anonymous" />
 
 
-       <script type="application/ld+json">
+  <script type="application/ld+json">
           {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
@@ -69,7 +69,7 @@
           }
         </script>
 
-        <script type="application/ld+json">
+  <script type="application/ld+json">
             {
               "@context": "https://schema.org",
               "@type": "Person",
@@ -79,49 +79,50 @@
             }
         </script>
 
-        <% if (blog.faqSchema && blog.faqSchema.trim() !== '') { %>
-          <script type="application/ld+json">
-              <%- blog.faqSchema %>
+  <% if (blog.faqSchemaJson) { %>
+    <script type="application/ld+json">
+            <%- JSON.stringify(JSON.parse(blog.faqSchemaJson), null, 2) %>
           </script>
-        <% } else { %>
-          <script type="application/ld+json">
-                  {
-                    "@context": "https://schema.org",
-                    "@type": "FAQPage",
-                    "mainEntity": [
-                      {
-                        "@type": "Question",
-                        "name": "What is <%= blog.title %>?",
-                        "acceptedAnswer": {
-                          "@type": "Answer",
-                          "text": "<%= blog.excerpt %>"
-                        }
-                      },
-                      {
-                        "@type": "Question",
-                        "name": "Who wrote this article?",
-                        "acceptedAnswer": {
-                          "@type": "Answer",
-                          "text": "<%= blog.authorName %>, <%= blog.authorTitle %>"
-                        }
-                      }
-                    ]
+    <% } else { %>
+      <script type="application/ld+json">
+            <%- JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": `What is ${blog.title}?`,
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": blog.excerpt.replace(/(<([^>]+)>)/gi, '')
                   }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Who wrote this article?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": `${blog.authorName}, ${blog.authorTitle}`
+                  }
+                }
+              ]
+            }, null, 2) %>
           </script>
-          <% } %>
+      <% } %>
 
 
-                    <meta name="google-site-verification" content="_ZuuY2jNs-2lytt1iVDMVNSUgj8Jsw8MRkke9Kph0p4" />
 
-                    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BD6TJVQC24"></script>
-                    <script>
-                      window.dataLayer = window.dataLayer || [];
-                      function gtag() { dataLayer.push(arguments); }
-                      gtag('js', new Date());
-                      gtag('config', 'G-BD6TJVQC24');
-                    </script>
+        <meta name="google-site-verification" content="_ZuuY2jNs-2lytt1iVDMVNSUgj8Jsw8MRkke9Kph0p4" />
 
-                    <meta name="yandex-verification" content="44f08ebc53b9aa57" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-BD6TJVQC24"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', 'G-BD6TJVQC24');
+        </script>
+
+        <meta name="yandex-verification" content="44f08ebc53b9aa57" />
 </head>
 
 <body>
@@ -162,18 +163,28 @@
               </p>
 
               <!-- Main Blog Images -->
-              <img src="<%= blog.image %>" alt="<%= blog.title %>" class="details-image">
-              <% if (blog.image2) { %>
-                <img src="<%= blog.image2 %>" alt="<%= blog.title %>" class="details-image">
-                <% } %>
-                  <div class="details-description">
-                    <div class="details-description-text">
-                      <%- blog.content %>
+              <% let imageName='' ; if (blog.image && blog.image2 && blog.image3) { imageName=blog.image.split('/').pop();
+                imageName=imageName.replace(/\.[^/.]+$/, "" ); imageName=imageName.replace(/[-_]+/g, ' ' );
+                imageName=imageName.replace(/\b\w/g, c=> c.toUpperCase());
+
+                imageName = imageName + ' Blog Image';
+                }
+                %>
+
+                <!-- Main Blog Image -->
+                <img src="<%= blog.image %>" alt="<%= imageName %>" class="details-image">
+
+                <% if (blog.image2) { %>
+                  <img src="<%= blog.image2 %>" alt="<%= imageName %>" class="details-image">
+                  <% } %>
+                    <div class="details-description">
+                      <div class="details-description-text">
+                        <%- blog.content %>
+                      </div>
                     </div>
-                  </div>
-                  <% if (blog.image3) { %>
-                    <img src="<%= blog.image3 %>" alt="<%= blog.title %>" class="details-image">
-                    <% } %>
+                    <% if (blog.image3) { %>
+                      <img src="<%= blog.image3 %>" alt="<%= imageName %>" class="details-image">
+                      <% } %>
 
 
             </div>
@@ -234,7 +245,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="footer hide-on-search">
+  <footer class="footer">
     <div class="container">
       <div class="footer-content">
         <div class="footer-brand">
@@ -246,16 +257,21 @@
         <div class="footer-bottom">
           <div class="footer-links">
             <span>© 2025 <b>e-scooter.blog</b> |</span>
+            <a href="/about">About</a> |
+            <a href="/contact">Contact</a> |
             <a href="/privacy-policy">Privacy Policy</a> |
             <a href="/terms-of-use">Terms of Use</a> |
-            <a href="/contact">Contact</a> |
             <a href="/sitemap">Sitemap</a>
           </div>
           <div class="footer-social">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://medium.com/@escooterblognews" target="_blank" rel="noopener noreferrer"><i
+                class="fa-brands fa-medium"></i></a>
+            <a href="https://x.com/escooter01" target="_blank" rel="noopener noreferrer"><i
+                class="fab fa-twitter"></i></a>
+            <a href="https://www.youtube.com/@e-scooter-01" target="_blank" rel="noopener noreferrer"><i
+                class="fa-brands fa-youtube"></i></a>
+            <a href="https://www.quora.com/profile/E-Scooter-4" target="_blank" rel="noopener noreferrer"><i
+                class="fab fa-quora"></i></a>
           </div>
         </div>
       </div>

@@ -61,19 +61,36 @@ exports.getBlogBySlug = async (req, res) => {
     const blog = await Blog.findOne({
       slug: req.params.slug,
       isActive: true
-    });
+    }).lean(); // lean() important for direct object manipulation
 
     if (!blog) {
       return res.status(404).render('404');
     }
+
+    // ✅ Parse faqSchema safely
+    if (blog.faqSchema) {
+      try {
+        if (typeof blog.faqSchema === 'string') {
+          blog.faqSchemaJson = JSON.stringify(JSON.parse(blog.faqSchema));
+        } else {
+          blog.faqSchemaJson = JSON.stringify(blog.faqSchema);
+        }
+      } catch (e) {
+        console.error('Invalid faqSchema JSON for', blog.title);
+        blog.faqSchemaJson = null;
+      }
+    } else {
+      blog.faqSchemaJson = null;
+    }
+
     const relatedBlogs = await Blog.find({
       isActive: true,
       _id: { $ne: blog._id }
     })
       .sort({ publishedDate: -1 })
       .limit(3)
-      .select('title slug category image image2 createdAt publishedDate');
-
+      .select('title slug category image createdAt publishedDate')
+      .lean();
 
     res.render('blog-detail', {
       blog,
