@@ -109,6 +109,15 @@ app.use((err, req, res, next) => {
     });
 });
 
+app.get('/data', async (req, res) => {
+    try {
+        res.json({ message: "Hello from /data API!" });
+    } catch (error) {
+        res.status(500).json({ error: "Something went wrong" });
+    }
+});
+
+
 // 404 handler
 app.use((req, res) => {
     res.status(404).render('404');

@@ -290,55 +290,52 @@
       </div>
     </div>
   </footer>
-  <script src="/js/all.min.js"></script>
   <script src="/js/bootstrap.bundle.min.js"></script>
-  <script src="/js/chart.js"></script>
-  <script>
-    // Wait for DOM to be fully loaded
-    document.addEventListener('DOMContentLoaded', function () {
-      const canvas = document.getElementById('salesChart');
+<script src="/js/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const canvas = document.getElementById('salesChart');
 
-      if (canvas && canvas.getContext) {
-        const ctx = canvas.getContext('2d');
+    if (!canvas) return; // Agar canvas nahi mila to kuch mat karo
 
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['FY2023', 'FY2024', 'FY2025'],
-            datasets: [{
-              label: 'Bajaj Chetak Sales',
-              data: [71941, 193439, 260000],
-              backgroundColor: 'rgba(62, 177, 122, 0.8)',
-              borderColor: 'rgba(62, 177, 122, 1)',
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: true,
-                position: 'top',
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  callback: function (value) {
-                    return value.toLocaleString();
-                  }
-                }
+    const ctx = canvas.getContext('2d');
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['FY2023', 'FY2024', 'FY2025'],
+        datasets: [{
+          label: 'Bajaj Chetak Sales',
+          data: [71941, 193439, 260000],
+          backgroundColor: 'rgba(62, 177, 122, 0.8)',
+          borderColor: 'rgba(62, 177, 122, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function (value) {
+                return value.toLocaleString();
               }
             }
           }
-        });
-      } else {
-        console.warn('Chart canvas element not found');
+        }
       }
     });
-  </script>
+  });
+</script>
+
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
