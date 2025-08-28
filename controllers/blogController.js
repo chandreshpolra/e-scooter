@@ -56,62 +56,85 @@ exports.getBlogsForIndex = async (req, res) => {
 
 
 // Get single blog by slug with exactly 2 related blogs
+const fs = require("fs");
+const path = require("path");
+
 exports.getBlogBySlug = async (req, res) => {
   try {
     const blog = await Blog.findOne({
       slug: req.params.slug,
       isActive: true
-    }).lean(); // lean() important for direct object manipulation
+    }).lean();
 
     if (!blog) {
-      return res.status(404).render('404');
+      return res.status(404).render("404");
     }
 
     // ✅ Parse faqSchema safely
     if (blog.faqSchema) {
       try {
-        if (typeof blog.faqSchema === 'string') {
+        if (typeof blog.faqSchema === "string") {
           blog.faqSchemaJson = JSON.stringify(JSON.parse(blog.faqSchema));
         } else {
           blog.faqSchemaJson = JSON.stringify(blog.faqSchema);
         }
       } catch (e) {
-        console.error('Invalid faqSchema JSON for', blog.title);
+        console.error("Invalid faqSchema JSON for", blog.title);
         blog.faqSchemaJson = null;
       }
     } else {
       blog.faqSchemaJson = null;
     }
 
+    // ✅ Find related blogs
     const relatedBlogs = await Blog.find({
       isActive: true,
       _id: { $ne: blog._id }
     })
       .sort({ publishedDate: -1 })
       .limit(3)
-      .select('title slug category image createdAt publishedDate')
+      .select("title slug category image createdAt publishedDate")
       .lean();
 
-    res.render('blog-detail', {
+    // ✅ Detect CSV dynamically from /data folder
+    const dataFolder = path.join(__dirname, "../data");
+    let csvFileName = null;
+
+    try {
+      const files = fs.readdirSync(dataFolder);
+      const csvFiles = files.filter(file => file.endsWith(".csv"));
+      csvFileName = csvFiles.length > 0 ? csvFiles[0] : null;
+    } catch (err) {
+      console.error("Error reading CSV folder:", err);
+    }
+
+    res.render("blog-detail", {
       blog,
       relatedBlogs,
+      csvFileName, // 👈 EJS me pass kar rahe hain
       title: blog.metaTitle || blog.title,
       metaDescription: blog.metaDescription || blog.excerpt,
-      metaTags: blog.metaTags || 'blog, automobile, technology',
-      canonicalUrl: blog.canonicalUrl || `https://e-scooter.blog/blogs/${blog.slug}`,
+      metaTags: blog.metaTags || "blog, automobile, technology",
+      canonicalUrl:
+        blog.canonicalUrl ||
+        `https://e-scooter.blog/blogs/${blog.slug}`,
       ogTitle: blog.ogTitle || blog.metaTitle || blog.title,
-      ogDescription: blog.ogDescription || blog.metaDescription || blog.excerpt,
+      ogDescription:
+        blog.ogDescription || blog.metaDescription || blog.excerpt,
       ogImage: blog.ogImage || blog.image,
-      ogUrl: blog.ogUrl || `https://e-scooter.blog/blogs/${blog.slug}`,
+      ogUrl:
+        blog.ogUrl || `https://e-scooter.blog/blogs/${blog.slug}`,
       twitterTitle: blog.twitterTitle || blog.metaTitle || blog.title,
-      twitterDescription: blog.twitterDescription || blog.metaDescription || blog.excerpt,
+      twitterDescription:
+        blog.twitterDescription || blog.metaDescription || blog.excerpt,
       twitterImage: blog.twitterImage || blog.image
     });
   } catch (error) {
-    console.error('Error fetching blog:', error);
-    res.status(500).render('error', { message: 'Failed to load blog' });
+    console.error("Error fetching blog:", error);
+    res.status(500).render("error", { message: "Failed to load blog" });
   }
 };
+
 
 // Admin: Get all blogs with search and filtering
 exports.getAllBlogs = async (req, res) => {

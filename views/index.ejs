@@ -37,15 +37,14 @@
     <meta name="twitter:image" content="<%= ogImage %>">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        crossorigin="anonymous" />
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/all.min.css" crossorigin="anonymous" />
+    <!-- Google Fonts -->
+    <link rel="preload" href="/css/fonts.css" as="style">
+    <link rel="stylesheet" href="/css/fonts.css">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/style.css" />
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
 
     <!-- Lucide Fonts -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -153,7 +152,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BD6TJVQC24"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'G-BD6TJVQC24');
     </script>
@@ -169,7 +168,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <a href="/"><img src="../uploads/logo.jpg" alt="E-Scooter Blog Logo"></a>
+                    <img src="../uploads/logo.jpg" alt="E-Scooter Logo" width="250" height="50" fetchpriority="high">
                 </div>
                 <p class="header-subtitle">Your Trusted Source for Electric Scooter and EV News</p>
             </div>
@@ -184,8 +183,10 @@
                     <% blogs.forEach(function(blog) { %>
                         <a href="/blogs/<%= blog.slug %>" class="blog-card">
                             <div class="blog-image">
-                                <img src="<%= blog.image %>" alt="<%= blog.title %>" class="blog-img">
+                                <img src="<%= blog.image %>" alt="<%= blog.title %>" class="blog-img" width="400"
+                                    height="200" fetchpriority="high" decoding="async">
                             </div>
+
                             <div class="blog-content">
                                 <div class="tag">
                                     <%= blog.category %>
@@ -195,33 +196,23 @@
                                 </h3>
                                 <div class="blog-meta">
                                     <div class="date">
-                                        Posted on : <%
-                                        let dateToUse = null;
-                                      
-                                        if (blog.createdAt && blog.createdAt !== "undefined" && blog.createdAt !== "null") {
-                                          dateToUse = blog.createdAt;
-                                        } else if (blog.publishedDate) {
-                                          dateToUse = blog.publishedDate;
-                                        }
-                                      
-                                        if (dateToUse) {
-                                      %>
-                                          <%= new Date(dateToUse).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" }) %>
-                                      <%
-                                        } else {
-                                      %>
-                                          Recently Added
-                                      <%
-                                        }
-                                      %>
-                                      
-                                      </div>
+                                        Posted on : <% let dateToUse=null; if (blog.createdAt && blog.createdAt
+                                            !=="undefined" && blog.createdAt !=="null" ) { dateToUse=blog.createdAt; }
+                                            else if (blog.publishedDate) { dateToUse=blog.publishedDate; } if
+                                            (dateToUse) { %>
+                                            <%= new Date(dateToUse).toLocaleDateString("en-GB", { day: "2-digit" ,
+                                                month: "long" , year: "numeric" }) %>
+                                                <% } else { %>
+                                                    Recently Added
+                                                    <% } %>
+
+                                    </div>
                                     <div class="author">
                                         <i class="fas fa-user"></i>
                                         <%= blog.authorName || 'E-Scooter Blog Team' %>
                                     </div>
                                 </div>
-                                
+
                                 <p class="blog-subtitle">
                                     <%= (blog.excerpt || '' ).replace(/<[^>]*>/g, '') %>
                                 </p>
@@ -428,10 +419,10 @@
                                 class="fa-brands fa-medium"></i></a>
                         <a href="https://x.com/escooter01" target="_blank" rel="noopener noreferrer"><i
                                 class="fab fa-twitter"></i></a>
-                        <a href="https://www.youtube.com/@e-scooter-01" target="_blank"
-                            rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="https://www.quora.com/profile/E-Scooter-4" target="_blank"
-                            rel="noopener noreferrer"><i class="fab fa-quora"></i></a>
+                        <a href="https://www.youtube.com/@e-scooter-01" target="_blank" rel="noopener noreferrer"><i
+                                class="fa-brands fa-youtube"></i></a>
+                        <a href="https://www.quora.com/profile/E-Scooter-4" target="_blank" rel="noopener noreferrer"><i
+                                class="fab fa-quora"></i></a>
                     </div>
                 </div>
             </div>
@@ -440,6 +431,7 @@
 
     <!-- JavaScript files -->
     <script src="/js/user.js"></script>
-</body>
+    <script src="/js/all.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
 
 </html>

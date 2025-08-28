@@ -229,6 +229,7 @@ router.get('/sitemap', async (req, res) => {
 
     const staticPages = [
       { path: '/', name: 'Home' },
+      { path: '/about', name: 'About' },
       { path: '/contact', name: 'Contact' },
       { path: '/privacy-policy', name: 'Privacy Policy' },
       { path: '/terms-of-use', name: 'Terms of Use' }
