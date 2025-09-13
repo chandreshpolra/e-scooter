@@ -132,7 +132,8 @@
     <div class="container">
       <div class="header-content">
         <div class="logo mb-2">
-          <a href="/"><img src="../uploads/logo.jpg" alt="E-Scooter Blog Logo"></a>
+          <a href="/"><img src="../uploads/logo.jpg" alt="E-Scooter Logo" width="250" height="50"
+              fetchpriority="high"></a>
         </div>
         <p class="header-subtitle">Your Trusted Source for Electric Scooter and EV News</p>
       </div>
@@ -291,50 +292,50 @@
     </div>
   </footer>
   <script src="/js/bootstrap.bundle.min.js"></script>
-<script src="/js/chart.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const canvas = document.getElementById('salesChart');
+  <script src="/js/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const canvas = document.getElementById('salesChart');
 
-    if (!canvas) return; // Agar canvas nahi mila to kuch mat karo
+      if (!canvas) return; // Agar canvas nahi mila to kuch mat karo
 
-    const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d');
 
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['FY2023', 'FY2024', 'FY2025'],
-        datasets: [{
-          label: 'Bajaj Chetak Sales',
-          data: [71941, 193439, 260000],
-          backgroundColor: 'rgba(62, 177, 122, 0.8)',
-          borderColor: 'rgba(62, 177, 122, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: true,
-            position: 'top'
-          }
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['FY2023', 'FY2024', 'FY2025'],
+          datasets: [{
+            label: 'Bajaj Chetak Sales',
+            data: [71941, 193439, 260000],
+            backgroundColor: 'rgba(62, 177, 122, 0.8)',
+            borderColor: 'rgba(62, 177, 122, 1)',
+            borderWidth: 1
+          }]
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              callback: function (value) {
-                return value.toLocaleString();
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function (value) {
+                  return value.toLocaleString();
+                }
               }
             }
           }
         }
-      }
+      });
     });
-  });
-</script>
+  </script>
 
 
   <script>
@@ -356,29 +357,29 @@
         .catch(err => console.error("CSV Load Error:", err));
     });
   </script>
- <script>
-  document.addEventListener("DOMContentLoaded", function () {
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
       const authorName = "<%= blog.authorName %>";  // CSV se aaya hua authorName
-  
+
       // AuthorName ko filename ke format me convert karte hain
       const formattedName = authorName.trim().replace(/\s+/g, "-"); // e.g. "Harsh Patel" -> "Harsh-Patel"
       const imagePath = "../uploads/" + formattedName + ".jpg";
-  
+
       // Pehle image try karo, agar mile to set karo, warna default rakho
       fetch(imagePath, { method: "HEAD" })
-          .then(response => {
-              if (response.ok) {
-                  document.getElementById("authorImage").src = imagePath;
-              } else {
-                  document.getElementById("authorImage").src = "../uploads/default.jpg";
-              }
-          })
-          .catch(() => {
-              document.getElementById("authorImage").src = "../uploads/default.jpg";
-          });
-  });
+        .then(response => {
+          if (response.ok) {
+            document.getElementById("authorImage").src = imagePath;
+          } else {
+            document.getElementById("authorImage").src = "../uploads/default.jpg";
+          }
+        })
+        .catch(() => {
+          document.getElementById("authorImage").src = "../uploads/default.jpg";
+        });
+    });
   </script>
-  
+
 
 
 

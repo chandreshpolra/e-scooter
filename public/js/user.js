@@ -13,53 +13,89 @@ function initPagination() {
   }
 }
 
+// Skeleton loader function
+function getSkeletonLoaderHTML() {
+  return `
+      <div class="skeleton-loader">
+          <div class="skeleton-blog-grid">
+              ${Array.from({length: 6}, () => `
+                  <div class="skeleton-blog-card">
+                      <div class="skeleton-blog-image"></div>
+                      <div class="skeleton-blog-content">
+                          <div class="skeleton-tag"></div>
+                          <div class="skeleton-title"></div>
+                          <div class="skeleton-meta">
+                              <div class="skeleton-date"></div>
+                              <div class="skeleton-author"></div>
+                          </div>
+                          <div class="skeleton-subtitle"></div>
+                      </div>
+                  </div>
+              `).join('')}
+          </div>
+      </div>
+  `;
+}
+
 function changePage(page) {
   const blogGrid = document.querySelector('.blog-grid');
   const paginationContainer = document.querySelector('.pagination-container');
   if (!blogGrid) return;
 
-  // Show loading spinner
-  blogGrid.innerHTML = `
-      <div class="text-center p-4">
-          <div class="spinner-border" role="status">
-              <span class="visually-hidden">Loading...</span>
-          </div>
-      </div>
-  `;
+  // Show skeleton loader at the top
+  blogGrid.innerHTML = getSkeletonLoaderHTML();
+  
+  // Scroll to top immediately when pagination starts
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+
+  // Record start time for minimum display duration
+  const startTime = Date.now();
+  const minDisplayTime = 1500; // Minimum 1.5 seconds display time
 
   fetch(`/api/blogs?page=${page}`)
       .then(response => response.json())
       .then(data => {
-          if (data.blogs && data.blogs.length > 0) {
-              renderBlogs(data.blogs);
+          // Calculate remaining time to ensure minimum display duration
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+          
+          setTimeout(() => {
+              if (data.blogs && data.blogs.length > 0) {
+                  renderBlogs(data.blogs);
 
-              if (data.pagination) {
-                  renderPagination(data.pagination);
-                  if (data.pagination.totalBlogs > 6) initPagination();
+                  if (data.pagination) {
+                      renderPagination(data.pagination);
+                      if (data.pagination.totalBlogs > 6) initPagination();
+                  }
+              } else {
+                  blogGrid.innerHTML = getEmptyStateHTML();
+                  if (paginationContainer) paginationContainer.innerHTML = '';
               }
-
-              // Scroll page to top
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else {
-              blogGrid.innerHTML = getEmptyStateHTML();
-              if (paginationContainer) paginationContainer.innerHTML = '';
-          }
+          }, remainingTime);
       })
       .catch(error => {
           console.error('Error loading blogs:', error);
-          blogGrid.innerHTML = `
-              <div class="blog-card">
-                  <div class="blog-image">
-                      <img src="/images/ev-logo.png" alt="Electric Scooter">
+          // Also apply minimum display time for error case
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+          
+          setTimeout(() => {
+              blogGrid.innerHTML = `
+                  <div class="blog-card">
+                      <div class="blog-image">
+                          <img src="/images/ev-logo.png" alt="Electric Scooter">
+                      </div>
+                      <div class="blog-content">
+                          <div class="tag">Error</div>
+                          <h3 class="blog-title">Failed to load blogs</h3>
+                          <div class="date">Please try again</div>
+                          <p class="blog-subtitle">There was an error loading the blogs. Please refresh the page.</p>
+                      </div>
                   </div>
-                  <div class="blog-content">
-                      <div class="tag">Error</div>
-                      <h3 class="blog-title">Failed to load blogs</h3>
-                      <div class="date">Please try again</div>
-                      <p class="blog-subtitle">There was an error loading the blogs. Please refresh the page.</p>
-                  </div>
-              </div>
-          `;
+              `;
+          }, remainingTime);
       });
 }
 
@@ -137,12 +173,60 @@ function renderPagination(pagination) {
       `;
   }
 
-  // Page numbers
-  for (let i = 1; i <= pagination.totalPages; i++) {
-      if (i === pagination.currentPage) {
-          paginationHTML += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
+  // Mobile-friendly page numbers (max 3 dots)
+  const currentPage = pagination.currentPage;
+  const totalPages = pagination.totalPages;
+  
+  if (totalPages <= 3) {
+      // Show all pages if 3 or fewer
+      for (let i = 1; i <= totalPages; i++) {
+          if (i === currentPage) {
+              paginationHTML += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
+          } else {
+              paginationHTML += `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-page="${i}">${i}</a></li>`;
+          }
+      }
+  } else {
+      // Show max 3 page dots with smart positioning
+      let startPage, endPage;
+      
+      if (currentPage <= 2) {
+          // Show pages 1, 2, 3
+          startPage = 1;
+          endPage = Math.min(3, totalPages);
+      } else if (currentPage >= totalPages - 1) {
+          // Show last 3 pages
+          startPage = Math.max(1, totalPages - 2);
+          endPage = totalPages;
       } else {
-          paginationHTML += `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-page="${i}">${i}</a></li>`;
+          // Show current page and one on each side
+          startPage = currentPage - 1;
+          endPage = currentPage + 1;
+      }
+      
+      // Add first page if not in range
+      if (startPage > 1) {
+          paginationHTML += `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-page="1">1</a></li>`;
+          if (startPage > 2) {
+              paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+          }
+      }
+      
+      // Add page numbers in range
+      for (let i = startPage; i <= endPage; i++) {
+          if (i === currentPage) {
+              paginationHTML += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
+          } else {
+              paginationHTML += `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-page="${i}">${i}</a></li>`;
+          }
+      }
+      
+      // Add last page if not in range
+      if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+              paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+          }
+          paginationHTML += `<li class="page-item"><a class="page-link" href="javascript:void(0)" data-page="${totalPages}">${totalPages}</a></li>`;
       }
   }
 
